@@ -1,560 +1,75 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+<!DOCTYPE html><html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Quiz Interativo: Equações do 1º e 2º Grau</title>
-<style>
-  /* Reset and basics */
-  *, *::before, *::after {
-    box-sizing: border-box;
-  }
-  body {
-    margin: 0;
-    font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #4c6ef5, #22b8cf);
-    color: #f8f9fa;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-  /* Container */
-  .container {
-    max-width: 1100px;
-    width: 90%;
-    margin: 0 auto;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 32px;
-    padding: 32px 0;
-  }
-  /* Header */
-  header {
-    background: rgba(33, 37, 41, 0.85);
-    padding: 16px 32px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    backdrop-filter: saturate(180%) blur(20px);
-    border-bottom-left-radius: 12px;
-    border-bottom-right-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-  header h1 {
-    font-weight: 800;
-    font-size: 1.8rem;
-    background: linear-gradient(45deg, #63e6be, #22b8cf);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    user-select: none;
-  }
-  nav {
-    display: flex;
-    gap: 24px;
-  }
-  nav button {
-    background: transparent;
-    border: none;
-    color: #f8f9fa;
-    font-weight: 600;
-    font-size: 1rem;
-    cursor: pointer;
-    padding: 8px 12px;
-    border-radius: 8px;
-    transition: background-color 0.25s ease;
-  }
-  nav button:focus-visible {
-    outline: 3px solid #63e6be;
-    outline-offset: 2px;
-  }
-  nav button:hover,
-  nav button[aria-current="page"] {
-    background: #63e6be;
-    color: #212529;
-  }
-
-  /* Main Content */
-  main {
-    flex-grow: 1;
-    background: rgba(33,37,41,0.75);
-    border-radius: 16px;
-    padding: 24px 32px;
-    box-shadow: 0 12px 20px rgba(0,0,0,0.3);
-    display: flex;
-    flex-direction: column;
-  }
-  section {
-    max-width: 700px;
-    margin: 0 auto;
-  }
-  .intro {
-    text-align: center;
-    margin-bottom: 40px;
-  }
-  .intro h2 {
-    font-weight: 700;
-    font-size: 2rem;
-    color: #63e6be;
-    margin-bottom: 16px;
-  }
-  .intro p {
-    font-size: 1.15rem;
-    line-height: 1.5;
-    color: #dee2e6;
-  }
-
-  /* Quiz styling */
-  #quizContainer {
-    background: #343a40;
-    padding: 28px 32px;
-    border-radius: 20px;
-    box-shadow: 0 5px 12px rgba(0,0,0,0.35);
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
-  #quizContainer h3 {
-    font-weight: 700;
-    font-size: 1.4rem;
-    margin: 0;
-    color: #a5d8ff;
-  }
-  #quizContainer p.equation {
-    font-size: 1.8rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    color: #c1f3f3;
-    margin: 0 0 12px 0;
-  }
-  .answer-input {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-  .answer-input label {
-    flex: 1 1 120px;
-    font-weight: 600;
-    font-size: 1rem;
-    color: #adb5bd;
-  }
-  .answer-input input[type="number"] {
-    flex: 1 1 100px;
-    padding: 10px 14px;
-    border-radius: 12px;
-    border: none;
-    font-size: 1.1rem;
-    font-weight: 700;
-    background-color: #495057;
-    color: #e9ecef;
-    transition: box-shadow 0.3s ease;
-  }
-  .answer-input input[type="number"]:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px #4dabf7;
-  }
-  .submit-btn {
-    align-self: start;
-    background: linear-gradient(135deg, #22b8cf, #15aabf);
-    border: none;
-    padding: 14px 32px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #f8f9fa;
-    border-radius: 18px;
-    cursor: pointer;
-    transition: background-position 0.3s ease, box-shadow 0.3s ease;
-    background-size: 200% 200%;
-    background-position: left center;
-    user-select: none;
-  }
-  .submit-btn:hover,
-  .submit-btn:focus-visible {
-    background-position: right center;
-    box-shadow: 0 8px 16px rgba(17, 195, 194, 0.6);
-    outline: none;
-  }
-  .submit-btn:disabled {
-    background: #6c757d;
-    cursor: not-allowed;
-    box-shadow: none;
-  }
-
-  /* Feedback message with icon */
-  #feedback {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-weight: 700;
-    font-size: 1.25rem;
-    min-height: 36px;
-    border-radius: 12px;
-    padding: 8px 16px;
-    user-select: none;
-  }
-  #feedback.correct {
-    background-color: #51cf66;
-    color: #1b4332;
-  }
-  #feedback.incorrect {
-    background-color: #ff6b6b;
-    color: #68151a;
-  }
-  #feedback svg {
-    width: 28px;
-    height: 28px;
-    flex-shrink: 0;
-  }
-
-  /* Footer */
-  footer {
-    background: rgba(33,37,41,0.85);
-    text-align: center;
-    padding: 16px 12px;
-    font-size: 0.9rem;
-    color: #adb5bd;
-    user-select: none;
-  }
-
-  /* Responsive */
-  @media (max-width: 640px) {
-    header {
-      flex-direction: column;
-      gap: 12px;
-      padding: 12px 16px;
-    }
-    nav {
-      gap: 12px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    main {
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz de Equações</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
       padding: 20px;
-      border-radius: 16px;
+      max-width: 600px;
+      margin: auto;
     }
-    #quizContainer {
-      padding: 20px 24px;
+    h1 {
+      text-align: center;
+      color: #333;
     }
-  }
-</style>
+    .pergunta {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    button {
+      margin-top: 10px;
+    }
+    .emoji {
+      font-size: 24px;
+      margin-left: 10px;
+    }
+  </style>
 </head>
 <body>
-  <header role="banner">
-    <h1>Quiz Equações de 1º & 2º Grau</h1>
-    <nav role="navigation" aria-label="Menu de navegação">
-      <button id="btnHome" aria-current="page">Início</button>
-      <button id="btnQuiz">Quiz</button>
-      <button id="btnSobre">Sobre</button>
-    </nav>
-  </header>
-
-  <main role="main" class="container">
-    <section id="sectionHome" tabindex="-1" aria-label="Seção inicial">
-      <div class="intro">
-        <h2>Bem-vindo ao Quiz de Equações de Primeiro e Segundo Grau</h2>
-        <p>Este site oferece uma forma interativa e divertida de praticar e aprender sobre equações lineares e quadráticas. Teste seus conhecimentos com perguntas objetivas e receba feedback imediato.</p>
-      </div>
-    </section>
-
-    <section id="sectionQuiz" hidden tabindex="-1" aria-label="Seção quiz de perguntas">
-      <div class="intro">
-        <h2>Teste seus conhecimentos agora!</h2>
-        <p>Responda às perguntas abaixo com atenção. Use números decimais e negativos se necessário.</p>
-      </div>
-      <div id="quizContainer" aria-live="polite" aria-atomic="true">
-        <!-- Quiz question and inputs injected by JS -->
-        <h3 id="questionText"></h3>
-        <p class="equation" id="equationText" aria-label="Equação da pergunta"></p>
-        <form id="answerForm" novalidate>
-          <div id="inputsContainer" class="answer-input-container"></div>
-          <button type="submit" class="submit-btn" id="submitBtn">Responder</button>
-        </form>
-        <div id="feedback" role="alert" aria-live="assertive" aria-atomic="true"></div>
-      </div>
-    </section>
-
-    <section id="sectionSobre" hidden tabindex="-1" aria-label="Seção sobre o site">
-      <div class="intro">
-        <h2>Sobre este site</h2>
-        <p>Este quiz educacional foi criado para ajudar estudantes a praticar e se familiarizar com equações do primeiro e segundo grau, oferecendo feedback instantâneo e uma experiência adaptativa que funciona em qualquer dispositivo.</p>
-      </div>
-    </section>
-
-    <section id="sectionFim" hidden tabindex="-1" aria-label="Seção final do quiz">
-      <div class="intro">
-        <h2>Parabéns por concluir o quiz!</h2>
-        <p>Você respondeu todas as questões. Obrigado por praticar suas habilidades em equações de primeiro e segundo grau!</p>
-        <button id="btnRestart" class="submit-btn">Reiniciar Quiz</button>
-      </div>
-    </section>
-  </main>
-
-  <footer role="contentinfo">
-    <p>© 2024 Quiz de Equações - Todos os direitos reservados.</p>
-  </footer>
-
+  <h1>Quiz: Equações do 1º e 2º Grau</h1>
+  <div id="quiz"></div>
   <script>
-    (() => {
-      const questions = [
-        {
-          id: 1,
-          type: "linear",
-          question: "Resolva a equação: 2x + 3 = 7",
-          equation: "2x + 3 = 7",
-          answers: { x: 2 },
-          inputs: [{ id: "x", label: "Valor de x" }]
-        },
-        {
-          id: 2,
-          type: "linear",
-          question: "Resolva a equação: 5x - 10 = 0",
-          equation: "5x - 10 = 0",
-          answers: { x: 2 },
-          inputs: [{ id: "x", label: "Valor de x" }]
-        },
-        {
-          id: 3,
-          type: "quadratic",
-          question: "Qual a(s) solução(ões) da equação: x² - 5x + 6 = 0?",
-          equation: "x² - 5x + 6 = 0",
-          answers: { x1: 2, x2: 3 },
-          inputs: [{ id: "x1", label: "Valor de x₁" }, { id: "x2", label: "Valor de x₂" }]
-        },
-        {
-          id: 4,
-          type: "quadratic",
-          question: "Qual a(s) solução(ões) da equação: x² + 4x + 4 = 0?",
-          equation: "x² + 4x + 4 = 0",
-          answers: { x1: -2, x2: -2 },
-          inputs: [{ id: "x1", label: "Valor de x₁" }, { id: "x2", label: "Valor de x₂" }]
-        },
-        {
-          id: 5,
-          type: "linear",
-          question: "Resolva: 3x + 7 = 1",
-          equation: "3x + 7 = 1",
-          answers: { x: -2 },
-          inputs: [{ id: "x", label: "Valor de x" }]
-        },
-        {
-          id: 6,
-          type: "quadratic",
-          question: "Qual é a solução da equação: x² - 9 = 0?",
-          equation: "x² - 9 = 0",
-          answers: { x1: 3, x2: -3 },
-          inputs: [{ id: "x1", label: "Valor de x₁" }, { id: "x2", label: "Valor de x₂" }]
-        },
-        {
-          id: 7,
-          type: "linear",
-          question: "Resolva: 4x - 8 = 8",
-          equation: "4x - 8 = 8",
-          answers: { x: 4 },
-          inputs: [{ id: "x", label: "Valor de x" }]
-        },
-        {
-          id: 8,
-          type: "quadratic",
-          question: "Qual a solução da equação: x² + x - 6 = 0?",
-          equation: "x² + x - 6 = 0",
-          answers: { x1: 2, x2: -3 },
-          inputs: [{ id: "x1", label: "Valor de x₁" }, { id: "x2", label: "Valor de x₂" }]
-        },
-        {
-          id: 9,
-          type: "linear",
-          question: "Qual o valor de x na equação 7x + 14 = 0?",
-          equation: "7x + 14 = 0",
-          answers: { x: -2 },
-          inputs: [{ id: "x", label: "Valor de x" }]
-        },
-        {
-          id: 10,
-          type: "quadratic",
-          question: "Resolva: x² - 4x + 4 = 0",
-          equation: "x² - 4x + 4 = 0",
-          answers: { x1: 2, x2: 2 },
-          inputs: [{ id: "x1", label: "Valor de x₁" }, { id: "x2", label: "Valor de x₂" }]
-        }
-      ];
+    const perguntas = [
+      { pergunta: 'Resolva: x + 5 = 12', resposta: '7' },
+      { pergunta: 'Resolva: 2x = 14', resposta: '7' },
+      { pergunta: 'Resolva: x - 3 = 10', resposta: '13' },
+      { pergunta: 'Resolva: 3x = 21', resposta: '7' },
+      { pergunta: 'Resolva: x² = 49 (use o valor positivo)', resposta: '7' },
+      { pergunta: 'Resolva: x² - 9 = 0 (valor positivo)', resposta: '3' },
+      { pergunta: 'Resolva: x² = 64 (valor positivo)', resposta: '8' },
+      { pergunta: 'Resolva: x² - 25 = 0 (valor positivo)', resposta: '5' },
+      { pergunta: 'Resolva: x/2 = 6', resposta: '12' },
+      { pergunta: 'Resolva: x + 8 = 20', resposta: '12' },
+    ];const quiz = document.getElementById('quiz');
 
-      // Cache DOM
-      const sections = {
-        home: document.getElementById("sectionHome"),
-        quiz: document.getElementById("sectionQuiz"),
-        sobre: document.getElementById("sectionSobre"),
-        fim: document.getElementById("sectionFim"),
-      };
-      const navButtons = {
-        home: document.getElementById("btnHome"),
-        quiz: document.getElementById("btnQuiz"),
-        sobre: document.getElementById("btnSobre"),
-      };
-      const questionText = document.getElementById("questionText");
-      const equationText = document.getElementById("equationText");
-      const inputsContainer = document.getElementById("inputsContainer");
-      const answerForm = document.getElementById("answerForm");
-      const feedback = document.getElementById("feedback");
-      const submitBtn = document.getElementById("submitBtn");
-      const btnRestart = document.getElementById("btnRestart");
+perguntas.forEach((item, index) => {
+  const div = document.createElement('div');
+  div.className = 'pergunta';
+  div.innerHTML = `
+    <p><strong>${index + 1}. ${item.pergunta}</strong></p>
+    <input type="text" id="resposta-${index}" />
+    <button onclick="verificar(${index}, '${item.resposta}')">Responder</button>
+    <span id="emoji-${index}" class="emoji"></span>
+  `;
+  quiz.appendChild(div);
+});
 
-      let currentQuestionIndex = 0;
-      let isAnswering = false;
+function verificar(index, respostaCorreta) {
+  const resposta = document.getElementById(`resposta-${index}`).value.trim();
+  const emojiSpan = document.getElementById(`emoji-${index}`);
+  if (resposta === respostaCorreta) {
+    emojiSpan.textContent = '😊';
+  } else {
+    emojiSpan.textContent = '😢';
+  }
+}
 
-      // Switch sections
-      function switchSection(target) {
-        Object.keys(sections).forEach(key => {
-          if (key === target) {
-            sections[key].hidden = false;
-            sections[key].focus();
-            if(navButtons[key]) navButtons[key].setAttribute("aria-current", "page");
-          } else {
-            sections[key].hidden = true;
-            if(navButtons[key]) navButtons[key].removeAttribute("aria-current");
-          }
-        });
-      }
-
-      navButtons.home.addEventListener("click", () => switchSection("home"));
-      navButtons.quiz.addEventListener("click", () => {
-        switchSection("quiz");
-        resetQuiz();
-      });
-      navButtons.sobre.addEventListener("click", () => switchSection("sobre"));
-      btnRestart.addEventListener("click", () => {
-        resetQuiz();
-        switchSection("quiz");
-      });
-
-      // Clear feedback and inputs to prepare question
-      function prepareQuestion() {
-        feedback.textContent = "";
-        feedback.className = "";
-        inputsContainer.innerHTML = "";
-        submitBtn.disabled = false;
-      }
-
-      // Render current question
-      function renderQuestion() {
-        prepareQuestion();
-        if (currentQuestionIndex >= questions.length) {
-          // Quiz finished
-          switchSection("fim");
-          return;
-        }
-        const q = questions[currentQuestionIndex];
-        questionText.textContent = q.question;
-        equationText.textContent = q.equation;
-
-        // Create inputs
-        q.inputs.forEach(({id, label}) => {
-          const wrapper = document.createElement("div");
-          wrapper.className = "answer-input";
-
-          const inputLabel = document.createElement("label");
-          inputLabel.setAttribute("for", `input-${id}`);
-          inputLabel.textContent = label;
-
-          const inputField = document.createElement("input");
-          inputField.type = "number";
-          inputField.step = "any";
-          inputField.id = `input-${id}`;
-          inputField.name = id;
-          inputField.required = true;
-          inputField.autocomplete = "off";
-
-          wrapper.appendChild(inputLabel);
-          wrapper.appendChild(inputField);
-          inputsContainer.appendChild(wrapper);
-        });
-      }
-
-      // SVG icons for happy and sad faces (Google Material Design style)
-      const icons = {
-        happy: `
-<svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#1B4332" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#51cf66" /><path d="M8 15s1.5 2 4 2 4-2 4-2" stroke="#1B4332" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="9" y1="9" x2="9" y2="9" stroke="#1B4332" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="15" y1="9" x2="15" y2="9" stroke="#1B4332" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        `,
-        sad: `
-<svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#68151A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#ff6b6b" /><path d="M16 16s-1.5-2-4-2-4 2-4 2" stroke="#68151A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="9" y1="9" x2="9" y2="9" stroke="#68151A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="15" y1="9" x2="15" y2="9" stroke="#68151A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        `
-      };
-
-      // Check answers with tolerance for decimal differences
-      function checkAnswers(userAnswers, correctAnswers) {
-        for (const key in correctAnswers) {
-          if (!(key in userAnswers)) return false;
-          if (Math.abs(userAnswers[key] - correctAnswers[key]) > 0.001) return false;
-        }
-        return true;
-      }
-
-      // Handle submission
-      answerForm.addEventListener("submit", event => {
-        event.preventDefault();
-        if (isAnswering) return; // block multiple submits
-        isAnswering = true;
-
-        // Gather user answers
-        const userAnswers = {};
-        const formData = new FormData(answerForm);
-        for (const [key, value] of formData.entries()) {
-          const num = parseFloat(value);
-          if (isNaN(num)) {
-            feedback.textContent = "Por favor, preencha todos os campos com números válidos.";
-            feedback.className = "incorrect";
-            feedback.innerHTML = icons.sad + feedback.textContent;
-            isAnswering = false;
-            return;
-          }
-          userAnswers[key] = num;
-        }
-
-        const currentQuestion = questions[currentQuestionIndex];
-        const correct = checkAnswers(userAnswers, currentQuestion.answers);
-
-        if (correct) {
-          feedback.className = "correct";
-          feedback.innerHTML = icons.happy + "Resposta correta!";
-          submitBtn.disabled = true;
-          // Disable inputs
-          Array.from(inputsContainer.querySelectorAll("input")).forEach(input => input.disabled = true);
-
-          // Load next question after a delay
-          setTimeout(() => {
-            currentQuestionIndex++;
-            if(currentQuestionIndex < questions.length){
-              renderQuestion();
-              isAnswering = false;
-            } else {
-              switchSection("fim");
-              isAnswering = false;
-            }
-          }, 1800);
-        } else {
-          feedback.className = "incorrect";
-          feedback.innerHTML = icons.sad + "Resposta incorreta. Tente novamente.";
-          isAnswering = false;
-        }
-      });
-
-      // Reset quiz
-      function resetQuiz() {
-        currentQuestionIndex = 0;
-        switchSection("quiz");
-        renderQuestion();
-        feedback.textContent = "";
-        feedback.className = "";
-      }
-
-      // Initial load
-      switchSection("home");
-    })();
   </script>
 </body>
 </html>
-
